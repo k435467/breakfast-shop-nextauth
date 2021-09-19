@@ -1,9 +1,11 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import { AxiosResponse } from "axios";
+import type { GetStaticProps, NextPage } from "next";
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
+import Button from "@mui/material/Button";
 
-const Home: NextPage = () => {
+const Home: NextPage = (props: any) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -18,7 +20,8 @@ const Home: NextPage = () => {
         </h1>
 
         <p className={styles.description}>
-          Get started by editing{' '}
+          {props.data}
+          <Button variant="text">Text</Button>Get started by editing{" "}
           <code className={styles.code}>pages/index.js</code>
         </p>
 
@@ -46,9 +49,7 @@ const Home: NextPage = () => {
             className={styles.card}
           >
             <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
+            <p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
           </a>
         </div>
       </main>
@@ -59,14 +60,29 @@ const Home: NextPage = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+const axios = require("axios").default;
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  let data = "123";
+  await axios.get("https://httpbin.org/get").then((res: AxiosResponse) => {
+    data = res.statusText;
+  });
+
+  return {
+    props: {
+      data,
+    },
+  };
+};
+
+export default Home;
