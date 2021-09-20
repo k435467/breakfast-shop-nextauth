@@ -4,6 +4,7 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import Button from "@mui/material/Button";
+import { signIn } from "next-auth/client";
 
 const Home: NextPage = (props: any) => {
   return (
@@ -23,6 +24,7 @@ const Home: NextPage = (props: any) => {
           {props.data}
           <Button variant="text">Text</Button>Get started by editing{" "}
           <code className={styles.code}>pages/index.js</code>
+          <button onClick={() => signIn()}>Sign in</button>
         </p>
 
         <div className={styles.grid}>
