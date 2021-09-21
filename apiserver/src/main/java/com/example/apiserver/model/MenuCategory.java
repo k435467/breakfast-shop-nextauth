@@ -14,7 +14,7 @@ public class MenuCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
-    Integer id;
+    Long id;
 
     @Column(unique = true)
     String title;
@@ -22,6 +22,5 @@ public class MenuCategory {
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "menuCategory")
     @EqualsAndHashCode.Exclude
-//    @EqualsAndHashCode.Include
     private Set<MenuItem> menuItems;
 }

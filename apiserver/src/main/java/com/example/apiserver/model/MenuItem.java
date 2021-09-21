@@ -12,7 +12,7 @@ public class MenuItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
-    Integer id;
+    Long id;
 
     @Column(unique = true)
     String title;
