@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("menuitem")
+@CrossOrigin("http://localhost:3000")
 public class MenuItemController {
     private final MenuItemService menuItemService;
     private final MenuCategoryService menuCategoryService;

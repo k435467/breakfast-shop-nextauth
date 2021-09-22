@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("menucategory")
+@CrossOrigin("http://localhost:3000")
 public class MenuCategoryController {
     private final MenuCategoryService menuCategoryService;
 
