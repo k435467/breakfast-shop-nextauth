@@ -1,8 +1,21 @@
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
-import { Container, Button } from "@mui/material";
+import {
+  Container,
+  Button,
+  Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { signIn, signOut, useSession } from "next-auth/client";
 import IMenu from "../lib/model/IMenu";
+import { Category } from "@mui/icons-material";
 
 const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
   const [session, loading] = useSession();
@@ -31,7 +44,38 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
             </Button>
           </>
         )}
-        {JSON.stringify(menu)}
+        <div>
+          {menu.map((category, i) => {
+            return (
+              <Accordion key={category.id}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls={`panel${category.id}a-content`}
+                  id={`panel${category.id}a-header`}
+                >
+                  <Typography variant="h6">{category.title}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <List>
+                    {category.menuItems.map((item) => {
+                      return (
+                        <ListItem key={item.id}>
+                          <ListItemText
+                            primary={item.title}
+                            style={{ wordBreak: "keep-all" }}
+                          ></ListItemText>
+                          <ListItemSecondaryAction>
+                            <Typography>{item.price}</Typography>
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </AccordionDetails>
+              </Accordion>
+            );
+          })}
+        </div>
       </Container>
     </>
   );
