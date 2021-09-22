@@ -14,10 +14,10 @@ public class MenuCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
-    Long id;
+    private Long id;
 
     @Column(unique = true)
-    String title;
+    private String title;
 
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "menuCategory")

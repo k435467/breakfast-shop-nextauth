@@ -12,13 +12,13 @@ public class MenuItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
-    Long id;
+    private Long id;
 
     @Column(unique = true)
-    String title;
+    private String title;
 
     @Column
-    Integer price;
+    private Integer price;
 
     @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
