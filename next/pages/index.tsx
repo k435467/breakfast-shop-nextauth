@@ -18,6 +18,7 @@ import { signIn, signOut, useSession } from "next-auth/client";
 import IMenu from "../lib/model/IMenu";
 import { useState } from "react";
 import AddCategoryModal from "../component/AddCategoryModal";
+import AddItemModal from "../component/AddItemModal";
 
 const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
   const [session, loading] = useSession();
@@ -25,6 +26,10 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
   const [openAddCategoryModal, setOpenAddCategoryModal] = useState(false);
   const handleOpenAddCategoryModal = () => setOpenAddCategoryModal(true);
   const handleCloseAddCategoryModal = () => setOpenAddCategoryModal(false);
+
+  const [openAddItemModal, setOpenAddItemModal] = useState(false);
+  const handleOpenAddItemModal = () => setOpenAddItemModal(true);
+  const handleCloseAddItemModal = () => setOpenAddItemModal(false);
 
   return (
     <>
@@ -45,7 +50,12 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
         {session && (
           <>
             Signed in as {session.user?.email} <br />
-            <Button variant="outlined" color="error" onClick={() => signOut()}>
+            <Button
+              variant="outlined"
+              color="error"
+              sx={{ m: 0.5 }}
+              onClick={() => signOut()}
+            >
               Sign out
             </Button>
           </>
@@ -54,17 +64,28 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
           <Button
             variant="contained"
             color="success"
+            sx={{ m: 0.5 }}
             onClick={handleOpenAddCategoryModal}
           >
             Add Category
           </Button>
-          <Button variant="contained" color="success">
+          <Button
+            variant="contained"
+            color="success"
+            sx={{ m: 0.5 }}
+            onClick={handleOpenAddItemModal}
+          >
             Add Item
           </Button>
         </Box>
         <AddCategoryModal
           open={openAddCategoryModal}
           handleClose={handleCloseAddCategoryModal}
+        />
+        <AddItemModal
+          open={openAddItemModal}
+          handleClose={handleCloseAddItemModal}
+          menu={menu}
         />
         <div>
           {menu.map((category) => {

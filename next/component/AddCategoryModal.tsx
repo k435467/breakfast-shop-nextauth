@@ -26,13 +26,12 @@ export default function AddCategoryModal(props: AddCategoryModalProps) {
     menuItems: [],
   });
 
-  const handleTitleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setMenuCategory({ ...menuCategory, [name]: value });
   };
 
   const handleAdd = () => {
-    console.log(menuCategory);
     axios.post("http://localhost:8080/menucategory", menuCategory).then(() => {
       console.log("OK!");
     });
@@ -55,7 +54,7 @@ export default function AddCategoryModal(props: AddCategoryModalProps) {
           Add Category
         </Typography>
         <TextField
-          onChange={handleTitleInputChange}
+          onChange={handleInputChange}
           fullWidth
           variant="standard"
           label="Title"
