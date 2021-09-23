@@ -1,5 +1,3 @@
-import type { GetServerSideProps, NextPage } from "next";
-import Head from "next/head";
 import {
   Container,
   Button,
@@ -11,14 +9,22 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
+  Box,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import type { GetServerSideProps, NextPage } from "next";
+import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/client";
 import IMenu from "../lib/model/IMenu";
-import { Category } from "@mui/icons-material";
+import { useState } from "react";
+import AddCategoryModal from "../component/AddCategoryModal";
 
 const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
   const [session, loading] = useSession();
+
+  const [openAddCategoryModal, setOpenAddCategoryModal] = useState(false);
+  const handleOpenAddCategoryModal = () => setOpenAddCategoryModal(true);
+  const handleCloseAddCategoryModal = () => setOpenAddCategoryModal(false);
 
   return (
     <>
@@ -44,8 +50,24 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
             </Button>
           </>
         )}
+        <Box display="flex" justifyContent="end">
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleOpenAddCategoryModal}
+          >
+            Add Category
+          </Button>
+          <Button variant="contained" color="success">
+            Add Item
+          </Button>
+        </Box>
+        <AddCategoryModal
+          open={openAddCategoryModal}
+          handleClose={handleCloseAddCategoryModal}
+        />
         <div>
-          {menu.map((category, i) => {
+          {menu.map((category) => {
             return (
               <Accordion key={category.id}>
                 <AccordionSummary
