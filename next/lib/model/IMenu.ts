@@ -1,7 +1,6 @@
+import IMenuCategory from "./IMenuCategory";
 import IMenuItem from "./IMenuItem";
 
-export default interface IMenu {
-  id: number;
-  title: string;
+export default interface IMenu extends IMenuCategory {
   menuItems: IMenuItem[];
 }

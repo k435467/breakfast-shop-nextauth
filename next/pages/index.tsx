@@ -10,26 +10,54 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Box,
+  IconButton,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/client";
 import IMenu from "../lib/model/IMenu";
 import { useState } from "react";
-import AddCategoryModal from "../component/AddCategoryModal";
+import CategoryModal from "../component/CategoryModal";
 import AddItemModal from "../component/AddItemModal";
+import IMenuCategory from "../lib/model/IMenuCategory";
+import axios from "../lib/axios";
 
 const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
   const [session, loading] = useSession();
 
+  // add category
+  const [activeCategory, setActiveCategory] = useState<IMenuCategory>({
+    id: 0,
+    title: "",
+  });
   const [openAddCategoryModal, setOpenAddCategoryModal] = useState(false);
-  const handleOpenAddCategoryModal = () => setOpenAddCategoryModal(true);
+  const handleOpenAddCategoryModal = () => {
+    setActiveCategory({ id: 0, title: "" });
+    setOpenAddCategoryModal(true);
+  };
   const handleCloseAddCategoryModal = () => setOpenAddCategoryModal(false);
 
+  // add item
   const [openAddItemModal, setOpenAddItemModal] = useState(false);
   const handleOpenAddItemModal = () => setOpenAddItemModal(true);
   const handleCloseAddItemModal = () => setOpenAddItemModal(false);
+
+  // edit category
+  const [openEditCategoryModal, setOpenEditCategoryModal] = useState(false);
+  const handleOpenEditCategoryModal = (category: IMenuCategory) => {
+    setActiveCategory({ id: category.id, title: category.title });
+    setOpenEditCategoryModal(true);
+  };
+  const handleCloseEditCategoryModal = () => setOpenEditCategoryModal(false);
+
+  const handleDeleteCategory = (id: string) => {
+    axios.delete("http://localhost:8080/menucategory/" + id).then(() => {
+      console.log("OK!");
+    });
+  };
 
   return (
     <>
@@ -78,14 +106,21 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
             Add Item
           </Button>
         </Box>
-        <AddCategoryModal
-          open={openAddCategoryModal}
-          handleClose={handleCloseAddCategoryModal}
-        />
         <AddItemModal
           open={openAddItemModal}
           handleClose={handleCloseAddItemModal}
           menu={menu}
+        />
+        <CategoryModal
+          open={openAddCategoryModal}
+          handleClose={handleCloseAddCategoryModal}
+          activeCategory={activeCategory}
+        />
+        <CategoryModal
+          open={openEditCategoryModal}
+          handleClose={handleCloseEditCategoryModal}
+          activeCategory={activeCategory}
+          edit
         />
         <div>
           {menu.map((category) => {
@@ -97,6 +132,17 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
                   id={`panel${category.id}a-header`}
                 >
                   <Typography variant="h6">{category.title}</Typography>
+                  <IconButton
+                    onClick={() => handleOpenEditCategoryModal(category)}
+                    sx={{ ml: 1 }}
+                  >
+                    <EditIcon color="secondary" />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => handleDeleteCategory(category.id.toString())}
+                  >
+                    <DeleteOutlineRoundedIcon color="error" />
+                  </IconButton>
                 </AccordionSummary>
                 <AccordionDetails>
                   <List>

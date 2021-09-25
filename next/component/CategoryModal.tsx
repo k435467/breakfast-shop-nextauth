@@ -1,6 +1,7 @@
 import { Box, Typography, Modal, TextField, Button } from "@mui/material";
 import React, { useState } from "react";
 import axios from "../lib/axios";
+import IMenuCategory from "../lib/model/IMenuCategory";
 
 const style = {
   position: "absolute" as "absolute",
@@ -14,13 +15,15 @@ const style = {
   p: 4,
 };
 
-interface AddCategoryModalProps {
+interface CategoryModalProps {
   open: boolean;
   handleClose: () => void;
+  activeCategory: IMenuCategory;
+  edit?: boolean;
 }
 
-export default function AddCategoryModal(props: AddCategoryModalProps) {
-  const { open, handleClose } = props;
+export default function CategoryModal(props: CategoryModalProps) {
+  const { open, handleClose, activeCategory, edit } = props;
   const [menuCategory, setMenuCategory] = useState({
     title: "",
     menuItems: [],
@@ -37,6 +40,14 @@ export default function AddCategoryModal(props: AddCategoryModalProps) {
     });
   };
 
+  const handleUpdate = () => {
+    axios
+      .put("http://localhost:8080/menucategory/" + activeCategory.id, menuCategory)
+      .then(() => {
+        console.log("OK!");
+      });
+  };
+
   return (
     <Modal
       open={open}
@@ -51,7 +62,7 @@ export default function AddCategoryModal(props: AddCategoryModalProps) {
           component="h2"
           sx={{ pb: 1 }}
         >
-          Add Category
+          {edit ? "Edit Category" : "Add Category"}
         </Typography>
         <TextField
           onChange={handleInputChange}
@@ -59,10 +70,17 @@ export default function AddCategoryModal(props: AddCategoryModalProps) {
           variant="standard"
           label="Title"
           name="title"
+          defaultValue={activeCategory.title}
         />
         <Box display="flex" justifyContent="end" sx={{ pt: 2.5 }}>
-          <Button variant="contained" color="success" onClick={handleAdd}>
-            Add
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
+              edit ? handleUpdate() : handleAdd();
+            }}
+          >
+            {edit ? "Confirm" : "Add"}
           </Button>
         </Box>
       </Box>
