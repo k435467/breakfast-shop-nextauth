@@ -21,9 +21,10 @@ import { signIn, signOut, useSession } from "next-auth/client";
 import IMenu from "../lib/model/IMenu";
 import { useState } from "react";
 import CategoryModal from "../component/CategoryModal";
-import AddItemModal from "../component/AddItemModal";
+import ItemModal from "../component/ItemModal";
 import IMenuCategory from "../lib/model/IMenuCategory";
 import axios from "../lib/axios";
+import IMenuItem from "../lib/model/IMenuItem";
 
 const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
   const [session, loading] = useSession();
@@ -40,11 +41,6 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
   };
   const handleCloseAddCategoryModal = () => setOpenAddCategoryModal(false);
 
-  // add item
-  const [openAddItemModal, setOpenAddItemModal] = useState(false);
-  const handleOpenAddItemModal = () => setOpenAddItemModal(true);
-  const handleCloseAddItemModal = () => setOpenAddItemModal(false);
-
   // edit category
   const [openEditCategoryModal, setOpenEditCategoryModal] = useState(false);
   const handleOpenEditCategoryModal = (category: IMenuCategory) => {
@@ -60,11 +56,45 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
     setOpenDelCategoryModal(true);
   };
   const handleCloseDelCategoryModal = () => setOpenDelCategoryModal(false);
-  const handleDeleteCategory = (id: string) => {
-    axios.delete("http://localhost:8080/menucategory/" + id).then(() => {
-      console.log("OK!");
-    });
+
+  // add item
+  const [activeItem, setActiveItem] = useState<IMenuItem>({
+    id: 0,
+    title: "",
+    price: 1000,
+  });
+  const [openAddItemModal, setOpenAddItemModal] = useState(false);
+  const handleOpenAddItemModal = () => {
+    setActiveItem({ id: 0, title: "", price: 1000 });
+    setOpenAddItemModal(true);
   };
+  const handleCloseAddItemModal = () => setOpenAddItemModal(false);
+
+  // edit item
+  const [openEditItemModal, setOpenEditItemModal] = useState(false);
+  const handleOpenEditItemModal = (item: IMenuItem) => {
+    setActiveItem({
+      id: item.id,
+      title: item.title,
+      price: item.price,
+      categoryId: item.categoryId,
+    });
+    setOpenEditItemModal(true);
+  };
+  const handleCloseEditItemModal = () => setOpenEditItemModal(false);
+
+  // delete item
+  const [openDelItemModal, setOpenDelItemModal] = useState(false);
+  const handleOpenDelItemModal = (item: IMenuItem) => {
+    setActiveItem({
+      id: item.id,
+      title: item.title,
+      price: item.price,
+      categoryId: item.categoryId,
+    });
+    setOpenDelItemModal(true);
+  };
+  const handleCloseDelItemModal = () => setOpenDelItemModal(false);
 
   return (
     <>
@@ -113,10 +143,25 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
             Add Item
           </Button>
         </Box>
-        <AddItemModal
+        <ItemModal
           open={openAddItemModal}
           handleClose={handleCloseAddItemModal}
           menu={menu}
+          activeItem={activeItem}
+        />
+        <ItemModal
+          open={openEditItemModal}
+          handleClose={handleCloseEditItemModal}
+          menu={menu}
+          activeItem={activeItem}
+          edit
+        />
+        <ItemModal
+          open={openDelItemModal}
+          handleClose={handleCloseDelItemModal}
+          menu={menu}
+          activeItem={activeItem}
+          del
         />
         <CategoryModal
           open={openAddCategoryModal}
@@ -165,7 +210,29 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
                             style={{ wordBreak: "keep-all" }}
                           ></ListItemText>
                           <ListItemSecondaryAction>
-                            <Typography>{item.price}</Typography>
+                            <div>
+                              <Typography component="span">{item.price}</Typography>
+                              <IconButton
+                                onClick={() =>
+                                  handleOpenEditItemModal({
+                                    ...item,
+                                    categoryId: category.id,
+                                  })
+                                }
+                              >
+                                <EditIcon color="warning" />
+                              </IconButton>
+                              <IconButton
+                                onClick={() =>
+                                  handleOpenDelItemModal({
+                                    ...item,
+                                    categoryId: category.id,
+                                  })
+                                }
+                              >
+                                <DeleteOutlineRoundedIcon color="error" />
+                              </IconButton>
+                            </div>
                           </ListItemSecondaryAction>
                         </ListItem>
                       );

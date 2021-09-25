@@ -9,9 +9,10 @@ import {
   FormControl,
 } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "../lib/axios";
 import IMenu from "../lib/model/IMenu";
+import IMenuItem from "../lib/model/IMenuItem";
 
 const style = {
   position: "absolute" as "absolute",
@@ -29,16 +30,30 @@ interface AddItemModalProps {
   open: boolean;
   handleClose: () => void;
   menu: IMenu[];
+  activeItem: IMenuItem;
+  edit?: boolean;
+  del?: boolean;
 }
 
-export default function AddItemModal(props: AddItemModalProps) {
-  const { open, handleClose, menu } = props;
+export default function ItemModal(props: AddItemModalProps) {
+  const { open, handleClose, menu, activeItem, edit, del } = props;
   const [category, setCategory] = useState<string>("");
   const [menuItem, setMenuItem] = useState({
     title: "",
     price: 1000,
-    menuCategoryId: 0,
+    categoryId: 0,
   });
+
+  useEffect(() => {
+    if (activeItem.categoryId) {
+      setCategory(activeItem.categoryId.toString());
+    }
+    setMenuItem({
+      title: activeItem.title,
+      price: activeItem.price,
+      categoryId: activeItem.categoryId ?? 0,
+    });
+  }, [activeItem]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,11 +62,35 @@ export default function AddItemModal(props: AddItemModalProps) {
 
   const handleSelectChange = (e: SelectChangeEvent) => {
     setCategory(e.target.value);
-    setMenuItem({ ...menuItem, menuCategoryId: parseInt(e.target.value) });
+    setMenuItem({ ...menuItem, categoryId: parseInt(e.target.value) });
   };
 
   const handleAdd = () => {
-    axios.post("http://localhost:8080/menuitem", menuItem).then(() => {
+    axios
+      .post("http://localhost:8080/menuitem", {
+        title: menuItem.title,
+        price: menuItem.price,
+        menuCategoryId: category,
+      })
+      .then(() => {
+        console.log("OK!");
+      });
+  };
+
+  const handleUpdate = () => {
+    axios
+      .put("http://localhost:8080/menuitem/" + activeItem.id, {
+        title: menuItem.title,
+        price: menuItem.price,
+        menuCategoryId: category,
+      })
+      .then(() => {
+        console.log("OK!");
+      });
+  };
+
+  const handleDelete = () => {
+    axios.delete("http://localhost:8080/menuitem/" + activeItem.id).then(() => {
       console.log("OK!");
     });
   };
@@ -70,7 +109,7 @@ export default function AddItemModal(props: AddItemModalProps) {
           component="h2"
           sx={{ pb: 1 }}
         >
-          Add Item
+          {del ? "Delete " : edit ? "Edit " : "Add "}Item
         </Typography>
         <TextField
           onChange={handleInputChange}
@@ -79,6 +118,8 @@ export default function AddItemModal(props: AddItemModalProps) {
           label="Title"
           name="title"
           sx={{ my: 1 }}
+          defaultValue={activeItem.title}
+          disabled={del}
         />
         <TextField
           onChange={handleInputChange}
@@ -87,6 +128,8 @@ export default function AddItemModal(props: AddItemModalProps) {
           label="Price"
           name="price"
           sx={{ my: 1 }}
+          defaultValue={edit ? activeItem.price : del ? activeItem.price : ""}
+          disabled={del}
         />
         <FormControl fullWidth variant="standard" sx={{ my: 1 }}>
           <InputLabel id="select-category-label">Category</InputLabel>
@@ -94,8 +137,16 @@ export default function AddItemModal(props: AddItemModalProps) {
             labelId="select-category-label"
             id="select-category"
             value={category}
+            defaultValue={
+              edit
+                ? activeItem.categoryId?.toString()
+                : del
+                ? activeItem.categoryId?.toString()
+                : ""
+            }
             onChange={handleSelectChange}
             label="Category"
+            disabled={del}
           >
             <MenuItem value="">
               <em>None</em>
@@ -110,8 +161,14 @@ export default function AddItemModal(props: AddItemModalProps) {
           </Select>
         </FormControl>
         <Box display="flex" justifyContent="end" sx={{ pt: 2.5 }}>
-          <Button variant="contained" color="success" onClick={handleAdd}>
-            Add
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
+              del ? handleDelete() : edit ? handleUpdate() : handleAdd();
+            }}
+          >
+            {del ? "Confirm" : edit ? "Confirm" : "Add"}
           </Button>
         </Box>
       </Box>
