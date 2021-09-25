@@ -20,10 +20,11 @@ interface CategoryModalProps {
   handleClose: () => void;
   activeCategory: IMenuCategory;
   edit?: boolean;
+  del?: boolean;
 }
 
 export default function CategoryModal(props: CategoryModalProps) {
-  const { open, handleClose, activeCategory, edit } = props;
+  const { open, handleClose, activeCategory, edit, del } = props;
   const [menuCategory, setMenuCategory] = useState({
     title: "",
     menuItems: [],
@@ -48,6 +49,12 @@ export default function CategoryModal(props: CategoryModalProps) {
       });
   };
 
+  const handleDelete = () => {
+    axios.delete("http://localhost:8080/menucategory/" + activeCategory.id).then(() => {
+      console.log("OK!");
+    });
+  };
+
   return (
     <Modal
       open={open}
@@ -62,7 +69,7 @@ export default function CategoryModal(props: CategoryModalProps) {
           component="h2"
           sx={{ pb: 1 }}
         >
-          {edit ? "Edit Category" : "Add Category"}
+          {del ? "Delete " : edit ? "Edit " : "Add "}Category
         </Typography>
         <TextField
           onChange={handleInputChange}
@@ -71,16 +78,17 @@ export default function CategoryModal(props: CategoryModalProps) {
           label="Title"
           name="title"
           defaultValue={activeCategory.title}
+          disabled={del}
         />
         <Box display="flex" justifyContent="end" sx={{ pt: 2.5 }}>
           <Button
             variant="contained"
-            color="success"
+            color={del ? "error" : edit ? "warning" : "success"}
             onClick={() => {
-              edit ? handleUpdate() : handleAdd();
+              del ? handleDelete() : edit ? handleUpdate() : handleAdd();
             }}
           >
-            {edit ? "Confirm" : "Add"}
+            {del ? "Confirm" : edit ? "Confirm" : "Add"}
           </Button>
         </Box>
       </Box>

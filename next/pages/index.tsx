@@ -53,6 +53,13 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
   };
   const handleCloseEditCategoryModal = () => setOpenEditCategoryModal(false);
 
+  // delete category
+  const [openDelCategoryModal, setOpenDelCategoryModal] = useState(false);
+  const handleOpenDelCategoryModal = (category: IMenuCategory) => {
+    setActiveCategory({ id: category.id, title: category.title });
+    setOpenDelCategoryModal(true);
+  };
+  const handleCloseDelCategoryModal = () => setOpenDelCategoryModal(false);
   const handleDeleteCategory = (id: string) => {
     axios.delete("http://localhost:8080/menucategory/" + id).then(() => {
       console.log("OK!");
@@ -122,6 +129,12 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
           activeCategory={activeCategory}
           edit
         />
+        <CategoryModal
+          open={openDelCategoryModal}
+          handleClose={handleCloseDelCategoryModal}
+          activeCategory={activeCategory}
+          del
+        />
         <div>
           {menu.map((category) => {
             return (
@@ -136,11 +149,9 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
                     onClick={() => handleOpenEditCategoryModal(category)}
                     sx={{ ml: 1 }}
                   >
-                    <EditIcon color="secondary" />
+                    <EditIcon color="warning" />
                   </IconButton>
-                  <IconButton
-                    onClick={() => handleDeleteCategory(category.id.toString())}
-                  >
+                  <IconButton onClick={() => handleOpenDelCategoryModal(category)}>
                     <DeleteOutlineRoundedIcon color="error" />
                   </IconButton>
                 </AccordionSummary>
