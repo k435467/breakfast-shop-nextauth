@@ -35,6 +35,7 @@ public class MenuCategoryService {
     public void updateMenuCategory(Long id, MenuCategory menuCategory) {
         MenuCategory target = getMenuCategoryById(id);
         target.setTitle(menuCategory.getTitle());
+        menuCategoryRepository.save(target);
     }
 
     public void deleteMenuCategory(Long id) {

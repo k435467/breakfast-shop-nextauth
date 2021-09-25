@@ -28,6 +28,7 @@ public class MenuItemService {
         target.setTitle(menuItem.getTitle());
         target.setPrice(menuItem.getPrice());
         target.setMenuCategory(menuItem.getMenuCategory());
+        menuItemRepository.save(target);
     }
 
     public void deleteMenuItem(Long id) {
