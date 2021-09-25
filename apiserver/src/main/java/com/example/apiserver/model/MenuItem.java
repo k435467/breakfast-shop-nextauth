@@ -21,7 +21,7 @@ public class MenuItem {
     private Integer price;
 
     @JsonBackReference
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
     @JoinColumn(name = "menuCategoryId")
     private MenuCategory menuCategory;
 }
