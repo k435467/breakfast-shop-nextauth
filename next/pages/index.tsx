@@ -19,15 +19,26 @@ import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/client";
 import IMenu from "../lib/model/IMenu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CategoryModal from "../component/CategoryModal";
 import ItemModal from "../component/ItemModal";
 import IMenuCategory from "../lib/model/IMenuCategory";
 import axios from "../lib/axios";
 import IMenuItem from "../lib/model/IMenuItem";
+import { AxiosResponse } from "axios";
 
-const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
+const Home: NextPage = () => {
   const [session, loading] = useSession();
+
+  const [menu, setMenu] = useState<IMenu[]>([]);
+  const refreshMenu = () => {
+    axios.get("http://localhost:8080/menucategory").then((res: AxiosResponse) => {
+      setMenu(res.data);
+    });
+  };
+  useEffect(() => {
+    refreshMenu();
+  }, []);
 
   // add category
   const [activeCategory, setActiveCategory] = useState<IMenuCategory>({
@@ -148,6 +159,7 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
           handleClose={handleCloseAddItemModal}
           menu={menu}
           activeItem={activeItem}
+          refreshMenu={refreshMenu}
         />
         <ItemModal
           open={openEditItemModal}
@@ -155,6 +167,7 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
           menu={menu}
           activeItem={activeItem}
           edit
+          refreshMenu={refreshMenu}
         />
         <ItemModal
           open={openDelItemModal}
@@ -162,23 +175,27 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
           menu={menu}
           activeItem={activeItem}
           del
+          refreshMenu={refreshMenu}
         />
         <CategoryModal
           open={openAddCategoryModal}
           handleClose={handleCloseAddCategoryModal}
           activeCategory={activeCategory}
+          refreshMenu={refreshMenu}
         />
         <CategoryModal
           open={openEditCategoryModal}
           handleClose={handleCloseEditCategoryModal}
           activeCategory={activeCategory}
           edit
+          refreshMenu={refreshMenu}
         />
         <CategoryModal
           open={openDelCategoryModal}
           handleClose={handleCloseDelCategoryModal}
           activeCategory={activeCategory}
           del
+          refreshMenu={refreshMenu}
         />
         <div>
           {menu.map((category) => {
@@ -248,15 +265,15 @@ const Home: NextPage<{ menu: IMenu[] }> = ({ menu }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const res = await fetch("http://localhost:8080/menucategory");
-  const data: IMenu[] = await res.json();
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//   const res = await fetch("http://localhost:8080/menucategory");
+//   const data: IMenu[] = await res.json();
 
-  return {
-    props: {
-      menu: data,
-    },
-  };
-};
+//   return {
+//     props: {
+//       menu: data,
+//     },
+//   };
+// };
 
 export default Home;

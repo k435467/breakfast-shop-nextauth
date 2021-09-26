@@ -21,10 +21,11 @@ interface CategoryModalProps {
   activeCategory: IMenuCategory;
   edit?: boolean;
   del?: boolean;
+  refreshMenu: () => void;
 }
 
 export default function CategoryModal(props: CategoryModalProps) {
-  const { open, handleClose, activeCategory, edit, del } = props;
+  const { open, handleClose, activeCategory, edit, del, refreshMenu } = props;
   const [menuCategory, setMenuCategory] = useState({
     title: "",
     menuItems: [],
@@ -35,9 +36,14 @@ export default function CategoryModal(props: CategoryModalProps) {
     setMenuCategory({ ...menuCategory, [name]: value });
   };
 
+  const refresh = () => {
+    refreshMenu();
+    handleClose();
+  };
+
   const handleAdd = () => {
     axios.post("http://localhost:8080/menucategory", menuCategory).then(() => {
-      console.log("OK!");
+      refresh();
     });
   };
 
@@ -45,13 +51,13 @@ export default function CategoryModal(props: CategoryModalProps) {
     axios
       .put("http://localhost:8080/menucategory/" + activeCategory.id, menuCategory)
       .then(() => {
-        console.log("OK!");
+        refresh();
       });
   };
 
   const handleDelete = () => {
     axios.delete("http://localhost:8080/menucategory/" + activeCategory.id).then(() => {
-      console.log("OK!");
+      refresh();
     });
   };
 

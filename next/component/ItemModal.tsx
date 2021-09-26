@@ -33,10 +33,11 @@ interface AddItemModalProps {
   activeItem: IMenuItem;
   edit?: boolean;
   del?: boolean;
+  refreshMenu: () => void;
 }
 
 export default function ItemModal(props: AddItemModalProps) {
-  const { open, handleClose, menu, activeItem, edit, del } = props;
+  const { open, handleClose, menu, activeItem, edit, del, refreshMenu } = props;
   const [category, setCategory] = useState<string>("");
   const [menuItem, setMenuItem] = useState({
     title: "",
@@ -47,6 +48,8 @@ export default function ItemModal(props: AddItemModalProps) {
   useEffect(() => {
     if (activeItem.categoryId) {
       setCategory(activeItem.categoryId.toString());
+    } else {
+      setCategory("");
     }
     setMenuItem({
       title: activeItem.title,
@@ -65,6 +68,11 @@ export default function ItemModal(props: AddItemModalProps) {
     setMenuItem({ ...menuItem, categoryId: parseInt(e.target.value) });
   };
 
+  const refresh = () => {
+    refreshMenu();
+    handleClose();
+  };
+
   const handleAdd = () => {
     axios
       .post("http://localhost:8080/menuitem", {
@@ -73,7 +81,7 @@ export default function ItemModal(props: AddItemModalProps) {
         menuCategoryId: category,
       })
       .then(() => {
-        console.log("OK!");
+        refresh();
       });
   };
 
@@ -85,13 +93,13 @@ export default function ItemModal(props: AddItemModalProps) {
         menuCategoryId: category,
       })
       .then(() => {
-        console.log("OK!");
+        refresh();
       });
   };
 
   const handleDelete = () => {
     axios.delete("http://localhost:8080/menuitem/" + activeItem.id).then(() => {
-      console.log("OK!");
+      refresh();
     });
   };
 
@@ -163,7 +171,7 @@ export default function ItemModal(props: AddItemModalProps) {
         <Box display="flex" justifyContent="end" sx={{ pt: 2.5 }}>
           <Button
             variant="contained"
-            color="success"
+            color={del ? "error" : edit ? "warning" : "success"}
             onClick={() => {
               del ? handleDelete() : edit ? handleUpdate() : handleAdd();
             }}
