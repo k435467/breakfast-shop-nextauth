@@ -46,15 +46,15 @@ export default function ItemModal(props: AddItemModalProps) {
   });
 
   useEffect(() => {
-    if (activeItem.categoryId) {
-      setCategory(activeItem.categoryId.toString());
+    if (activeItem.menuCategoryId) {
+      setCategory(activeItem.menuCategoryId.toString());
     } else {
       setCategory("");
     }
     setMenuItem({
       title: activeItem.title,
       price: activeItem.price,
-      categoryId: activeItem.categoryId ?? 0,
+      categoryId: activeItem.menuCategoryId ?? 0,
     });
   }, [activeItem]);
 
@@ -75,7 +75,7 @@ export default function ItemModal(props: AddItemModalProps) {
 
   const handleAdd = () => {
     axios
-      .post("http://localhost:8080/menuitem", {
+      .post("/api/menuitem", {
         title: menuItem.title,
         price: menuItem.price,
         menuCategoryId: category,
@@ -87,7 +87,7 @@ export default function ItemModal(props: AddItemModalProps) {
 
   const handleUpdate = () => {
     axios
-      .put("http://localhost:8080/menuitem/" + activeItem.id, {
+      .put("/api/menuitem/" + activeItem.id, {
         title: menuItem.title,
         price: menuItem.price,
         menuCategoryId: category,
@@ -98,7 +98,7 @@ export default function ItemModal(props: AddItemModalProps) {
   };
 
   const handleDelete = () => {
-    axios.delete("http://localhost:8080/menuitem/" + activeItem.id).then(() => {
+    axios.delete("/api/menuitem/" + activeItem.id).then(() => {
       refresh();
     });
   };
@@ -147,9 +147,9 @@ export default function ItemModal(props: AddItemModalProps) {
             value={category}
             defaultValue={
               edit
-                ? activeItem.categoryId?.toString()
+                ? activeItem.menuCategoryId?.toString()
                 : del
-                ? activeItem.categoryId?.toString()
+                ? activeItem.menuCategoryId?.toString()
                 : ""
             }
             onChange={handleSelectChange}

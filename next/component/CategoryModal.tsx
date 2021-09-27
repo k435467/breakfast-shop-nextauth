@@ -42,21 +42,19 @@ export default function CategoryModal(props: CategoryModalProps) {
   };
 
   const handleAdd = () => {
-    axios.post("http://localhost:8080/menucategory", menuCategory).then(() => {
+    axios.post("/api/menucategory", menuCategory).then(() => {
       refresh();
     });
   };
 
   const handleUpdate = () => {
-    axios
-      .put("http://localhost:8080/menucategory/" + activeCategory.id, menuCategory)
-      .then(() => {
-        refresh();
-      });
+    axios.put("/api/menucategory/" + activeCategory.id, menuCategory).then(() => {
+      refresh();
+    });
   };
 
   const handleDelete = () => {
-    axios.delete("http://localhost:8080/menucategory/" + activeCategory.id).then(() => {
+    axios.delete("/api/menucategory/" + activeCategory.id).then(() => {
       refresh();
     });
   };

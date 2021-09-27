@@ -2,5 +2,5 @@ export default interface IMenuItem {
   id: number;
   title: string;
   price: number;
-  categoryId?: number;
+  menuCategoryId?: number;
 }
