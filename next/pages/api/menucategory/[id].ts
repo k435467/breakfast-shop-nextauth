@@ -3,6 +3,7 @@ import IMenu from "../../../lib/model/IMenu";
 import axios from "../../../lib/axios";
 import { AxiosResponse } from "axios";
 import jwt from "next-auth/jwt";
+import { apiserverURL } from "../../../lib/envVariable";
 
 const secret = process.env.SECRET;
 
@@ -10,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const { id } = req.query;
   if (req.method === "GET") {
     await axios
-      .get("http://localhost:8080/menucategory/" + id)
+      .get(apiserverURL + "/menucategory/" + id)
       .then((apiserverRes: AxiosResponse) => {
         res.status(apiserverRes.status).json(apiserverRes.data);
       });
@@ -19,13 +20,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     if (token) {
       if (req.method === "PUT") {
         await axios
-          .put("http://localhost:8080/menucategory/" + id, req.body)
+          .put(apiserverURL + "/menucategory/" + id, req.body)
           .then((apiserverRes: AxiosResponse) => {
             res.status(apiserverRes.status).json(apiserverRes.data);
           });
       } else if (req.method === "DELETE") {
         await axios
-          .delete("http://localhost:8080/menucategory/" + id)
+          .delete(apiserverURL + "/menucategory/" + id)
           .then((apiserverRes: AxiosResponse) => {
             res.status(apiserverRes.status).json(apiserverRes.data);
           });
