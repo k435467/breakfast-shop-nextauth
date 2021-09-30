@@ -1,10 +1,55 @@
 # breakfast-shop-nextauth
 
+- [breakfast-shop-nextauth](#breakfast-shop-nextauth)
+  - [Usage](#usage)
+    - [Option1: pull the images from Docker Hub](#option1-pull-the-images-from-docker-hub)
+    - [Option2: build the images](#option2-build-the-images)
+    - [Run](#run)
+  - [My Notes](#my-notes)
+
 ## Usage
 
-### Build The Images
+Prepare the images.
+
+- Option1: pull the images from my Docker Hub
+- Option2: build the images
+
+### Option1: pull the images from Docker Hub
+
+```shell
+docker pull ethankohl/breakfast-shop-apiserver
+docker pull ethankohl/breakfast-shop-next
+```
+
+**NOTE**: Modify the images in docker-compose.yml accordingly.
+
+### Option2: build the images
+
+```shell
+# build the apiserver image
+cd apiserver/
+./mvnw clean package    # might need to change the jar file name in Dockerfile accordingly
+docker build -t apiserver:latest .
+
+# build the next image
+cd ../next/
+docker build -t next:latest .
+```
 
 ### Run
+
+1. Put the init.sql in right place to setup mysql.
+
+```shell
+sudo mv init.sql /home/user/db/mysql/init/init.sql
+```
+
+2. Fill the environment variables in the env_files in env directory.
+3. Run.
+
+```shell
+docker-comopse up
+```
 
 ## My Notes
 
