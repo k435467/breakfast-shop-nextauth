@@ -1,5 +1,9 @@
 # breakfast-shop-nextauth
 
+<p align="center">
+  <img src="breakfast-shop-nextauth-demo.gif" width="300">
+</p>
+
 - [breakfast-shop-nextauth](#breakfast-shop-nextauth)
   - [Usage](#usage)
     - [Option1: pull the images from Docker Hub](#option1-pull-the-images-from-docker-hub)
